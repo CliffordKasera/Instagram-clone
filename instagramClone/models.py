@@ -36,3 +36,27 @@ class Image(models.Model):
 
         images = Image.objects.all()
         return images
+
+
+class Profile(models.Model):
+    profile_pic = models.ImageField(upload_to='profile/'blank=True)
+    bio = models.CharField(max_length=255)
+    user = models.ForeignKey(User)
+
+    def save_profile(self):
+        self.save()
+    
+    @classmethod
+    def search_profile(cls, name):
+        profile = Profile.objects.filter(user__username__icontains = name)
+        return profile
+    
+    @classmethod
+    def get_by_id(cls, id):
+        profile = Profile.objects.get(user = id)
+        return profile
+
+    @classmethod
+    def filter_by_id(cls, id):
+        profile = Profile.objects.filter(user = id).first()
+        return profile
