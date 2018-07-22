@@ -60,3 +60,24 @@ class Profile(models.Model):
     def filter_by_id(cls, id):
         profile = Profile.objects.filter(user = id).first()
         return profile
+
+
+class Comments(models.Model):
+    comment = models.CharField(max_length=140,blank=True,null=True)
+    posted_on = models.DateTimeField(auto_now_add=True)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.Comments
+    
+    def save_comment(self):
+        return self.save()
+
+    def delete_comment(self):
+        return self.delete()
+    
+    @classmethod
+    def get_comments_by_images(cls, id):
+        comments = cls.objects.filter(image__pk = id)
+        return comments
