@@ -1,0 +1,133 @@
+{% load static %}
+{% load bootstrap3 %}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <style>main {
+  background: #fff;
+  padding: 40px 20px;
+  border-radius: 5px;
+  box-shadow: 5px 55px 50px -20px #b6b6b6; 
+  width: 100%;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+
+.twitter {
+  height: 46px;
+  align-items: center;
+  display: flex;
+  padding: 0 10px;
+  border: 1px solid rgba(238,238,238 ,1);
+  border-radius: 5px;
+  color: rgba(117,117,117 ,1);
+  box-shadow: 5px 10px 20px -20px rgba(85,172,238 ,1);
+}
+
+.twitter li {
+  cursor: pointer;
+}
+
+
+.twitter li:hover{
+  color: rgba(85,172,238 ,1);
+}
+
+.twitter__bird {
+  margin-left: auto;
+  margin-right: auto;
+  color: rgba(85,172,238 ,1);
+  font-size: 1.3em;
+}
+
+.twitter li:not(:last-child):not(.twitter__bird) {
+  margin-right: 10px;
+}
+
+.twitter li  i:not(.fa-twitter):not(.fa-search):not(.fa-user-circle-o) {
+  margin-right: 3px;
+}
+
+.twitter li > button {
+  font-size: 0.8em;
+  border: 0;
+  background: rgba(85,172,238 ,1);
+  color: #fff;
+  border-radius: 100px;
+}</style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    {%if title%}
+    
+    <title>{{title}}</title>
+    {%endif%} 
+    
+    {% block styles %} 
+    
+    {% bootstrap_css %}
+        
+    {% endblock %}
+
+</head>
+<body>
+<main>
+    <ul class="twitter" role="navigation">
+        <li>
+            <i class="fa fa-home"></i>Home</li>
+        <li>
+            <i class="fa fa-bell-o"></i>Notifications</li>
+        <li>
+            <i class="fa fa-envelope-o"></i>Messages</li>
+        <li>
+            <i class="fa fa-twitter"></i>
+        </li>
+             {% if user.is_authenticated %}
+            
+            
+                <li class="dropdown">
+            
+                    <a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown" role="button" aria-expanded="false">Account
+            
+                        <span class="caret"></span>
+            
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="/accounts/password/change">Change Password</a>
+                        </li>
+                        <li>
+                            <a href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                </li>
+            {% else %}
+            <li>
+                <a class='btn btn-default' href="/accounts/login">Login</a>
+            </li>
+            
+            {% endif %}
+        <li>
+            <form>
+                <input placeholder="search Instagram" />
+                <i class="fa fa-search"></i>
+            </form>
+        </li>
+        <li>
+            <i class="fa fa-user-circle-o"></i>
+        </li>
+        <li>
+            <button>Instagram</button>
+        </li>
+    </ul>
+</main>
+</body>
+</html>
