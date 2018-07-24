@@ -1,0 +1,86 @@
+{% extends 'instagram/base.html' %} 
+{% load static %}
+{% block content %}
+<body style="background-color: tan">
+<div class="container top" style="overflow: hidden;">
+    
+    <div class="row">
+        
+        <div class="col-md-7">
+            {% if user.is_authenticated %}
+            
+            {% for img in images %}
+            
+            <div class="home-images">
+                
+                <p class="home-text">
+                    
+                    <a href="{% url 'edit_profile' username=img.user.username %}">{{img.user.username}}</a>
+                
+                </p>
+                
+                <img src="{{img.image.cdn_url}}" alt="Image">
+                
+                <ul class="list-inline home-text">
+                    
+                    <li class="list-inline-item">
+                        
+                        <i class="fa fa-heart-o fa-2x" aria-hidden="true"></i>
+                    
+                    </li>
+                    
+                    <li class="list-inline-item">
+                        
+                        <a href="{% url 'single_image' image_id=img.id %}">
+                            
+                            <i class="fa fa-comment-o fa-2x" aria-hidden="true"></i>
+                        
+                        </a>
+                    
+                    </li>
+                
+                </ul>
+                
+                <ul class="list-inline home-list">
+                    
+                    <li class="list-inline-item">
+                        
+                        <a href="{% url 'edit_profile' username=img.user.username %}">{{img.user.username}}</a>
+                    
+                    </li>
+                    
+                    <li class="list-inline-item">
+                        
+                        {% autoescape on %}
+                        
+                        <p>{{img.caption|safe}} </p>
+                        
+                        {% endautoescape %}
+                    
+                    </li>
+                
+                </ul>
+
+            </div>
+            {% empty %}
+            {% endfor %}
+            
+            {% else %}
+                          
+            <br>
+            <br>
+            <br>
+                <h1 style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 40px;">Instagram</h1>
+                <br>
+                <br>
+                <p style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 30px;">sign up to view pictures</p>
+                <p style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 30px;">and videos from family and friends</p>    
+            {% endif %}
+        
+        </div>
+    
+    </div>
+
+</div>
+</body>
+{% endblock %}
