@@ -1,14 +1,8 @@
 from django import forms
+from pyuploadcare.dj.forms import FileWidget
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Image, Profile, Comments
-
-class SignupForm(UserCreationForm):
-    email = forms.EmailField(max_length=200, help_text = 'Required')
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password', 'confirmpassword')
 
 class ImageForm(forms.ModelForm):
 
