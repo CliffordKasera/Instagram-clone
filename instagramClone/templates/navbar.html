@@ -1,4 +1,5 @@
 {% load static %}
+{% load staticfiles %}
 {% load bootstrap3 %}
 
 <!DOCTYPE html>
@@ -6,13 +7,12 @@
 <html>
 
 <head>
-
+    <link rel="shortcut icon"  href="{{STATIC_URL}}favicon.ico"/>
     <meta charset="utf-8">
     <style>main {
   background: #fff;
   padding: 40px 20px;
   border-radius: 5px;
-  box-shadow: 5px 55px 50px -20px #b6b6b6; 
   width: 100%;
 }
 
@@ -29,7 +29,7 @@ ul {
   padding: 0 10px;
   border: 1px solid rgba(238,238,238 ,1);
   border-radius: 5px;
-  color: rgba(117,117,117 ,1);
+  color: rgba(238,238,238 ,1);
   box-shadow: 5px 10px 20px -20px rgba(85,172,238 ,1);
 }
 
@@ -60,7 +60,7 @@ ul {
 .twitter li > button {
   font-size: 0.8em;
   border: 0;
-  background: rgba(85,172,238 ,1);
+  background: rgba(238,238,238 ,1);
   color: #fff;
   border-radius: 100px;
 }</style>
@@ -79,17 +79,16 @@ ul {
 
 </head>
 <body>
-<main>
+<main style="background-color: rgb(205, 72, 107)" class="navbar-static-top">
     <ul class="twitter" role="navigation">
         <li>
-            <i class="fa fa-home"></i>Home</li>
+            <a href="{% url 'home' %}" class="fa fa-home">Home</a></li>
         <li>
             <i class="fa fa-bell-o"></i>Notifications</li>
         <li>
             <i class="fa fa-envelope-o"></i>Messages</li>
         <li>
-            <i class="fa fa-twitter"></i>
-        </li>
+            <a href="{% url 'edit_profile' username=user.username %}" class="fa fa-twitter">My Profile</a></li>
              {% if user.is_authenticated %}
             
             
@@ -107,12 +106,28 @@ ul {
                         <li>
                             <a href="/logout">Logout</a>
                         </li>
+                        <li>
+                            <a href="accounts/editprofile">Edit Profile</a>
+                        </li>
                     </ul>
                 </li>
             {% else %}
-            <li>
-                <a class='btn btn-default' href="/accounts/login">Login</a>
-            </li>
+                <li class="dropdown">
+                
+                    <a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown" role="button" aria-expanded="false">Account
+                
+                        <span class="caret"></span>
+                
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="/accounts/login">Login</a>
+                        </li>
+                        <li>
+                            <a href="/accounts/register">Sign Up</a>
+                        </li>
+                    </ul>
+                </li>
             
             {% endif %}
         <li>
@@ -125,9 +140,10 @@ ul {
             <i class="fa fa-user-circle-o"></i>
         </li>
         <li>
-            <button>Instagram</button>
+            <button style="color: deeppink">Instagram</button>
         </li>
     </ul>
 </main>
+<!--The search form above-->
 </body>
 </html>
