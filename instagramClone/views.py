@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from .models import Image, Profile, Comments
-from .forms import SignupForm, ImageForm, ProfileForm, CommentForm
+from .forms import ImageForm, ProfileForm, CommentForm
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -26,11 +26,11 @@ def upload_image(request):
             upload = form.save(commit=False)
             upload.profile = request.user
             upload.save()
-            return redirect('profile', username=request.user)
+            return redirect('edit_profile', username=request.user)
     else:
         form = ImageForm()
     
-    return render(request, 'profile/upload_image.html', {'form':form})
+    return render(request, 'registration/upload_image.html', {'form':form})
 
 @login_required(login_url='/accounts/login')
 def edit_profile(request, username):
