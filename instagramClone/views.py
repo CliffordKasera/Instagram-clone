@@ -11,33 +11,12 @@ from django.template.loader import render_to_string
 
 # Create your views here.
 
-@login_required(login_url='/')
 def home(request):
     title = 'Instagram'
     images = Image.get_all_images()
     
     return render(request, 'instagram/index.html', {'images':images,'title':title})
 
-def signup(request):
-    if request.user.is_authenticated():
-        return redirect('home')
-    
-    else:
-        form = SignupForm()
-        return render(request, 'registration/registration_form.html',{'form':form})
-
-    
-def profile(request, username):
-    title = 'Instagram'
-    profile = User.objects.get(username=username)
-    try:
-        profile_details = Profile.get_by_id(profile.id)
-    except:
-        profile_details = Profile.filter_by_id(profile.id)
-    images = Image.get_profile_images(profile.id)
-    title = f'@{profile.username} Instagram photos and videos'
-
-    return render(request, 'profile/profile.html', {'title':title, 'profile':profile, 'profile_details':profile_details, 'images':images})
 
 @login_required(login_url='/accounts/login')
 def upload_image(request):
@@ -54,18 +33,30 @@ def upload_image(request):
     return render(request, 'profile/upload_image.html', {'form':form})
 
 @login_required(login_url='/accounts/login')
-def edit_profile(request):
+def edit_profile(request, username):
+    user = User.objects.get(username=username)
+    try:
+        profile_details = Profile.get_by_id(user.id)
+    except:
+        profile_details = Profile.filter_by_id(user.id)
+    images = Image.get_profile_images(user.id)
+    title = f'@{user.username} Instagram photos and videos'
+
+    return render(request, 'registration/edit_profile.html', {'title':title, 'user':user, 'profile_details':profile_details, 'images':images})
+
+@login_required(login_url='/accounts/login')
+def editprofile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             edit = form.save(commit=False)
             edit.user = request.user
             edit.save()
-            return redirect('edit_profile')
+            return redirect('editprofile')
     else:
         form = ProfileForm()
 
-    return render(request, 'profile/edit_profile.html', {'form':form})
+    return render(request, 'registration/profile.html', {'form':form})
 
 @login_required(login_url='/accounts/login')
 def single_image(request, image_id):
@@ -84,7 +75,7 @@ def single_image(request, image_id):
         form = CommentForm()
         
     return render(request, 'image.html', {'image':image, 'form':form, 'comments':comments})
-
+@login_required(login_url='/accounts/login')
 def search(request):
     if 'search' in request.GET and request.GET['search']:
         search_term = request.GET.get('search')
