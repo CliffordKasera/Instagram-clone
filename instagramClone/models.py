@@ -4,6 +4,8 @@ from pyuploadcare.dj.models import ImageField
 
 from django.contrib.auth.models import User
 
+from friendship.models import Friend,Follow,Block
+
 # Create your models here.
 
 
@@ -13,7 +15,7 @@ class Profile(models.Model):
 
     bio = models.CharField(max_length=255)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save_profile(self):
 
@@ -48,8 +50,6 @@ class Image(models.Model):
     image = ImageField(null=True, blank=True, manual_crop="")
 
     upload_date = models.DateTimeField(auto_now=True)
-
-    likes = models.BooleanField(default=False)
 
     caption = models.CharField(max_length=250)
 
@@ -123,15 +123,8 @@ class Comments(models.Model):
 
 class Likes(models.Model):
 
-    imageid = models.IntegerField()
+    imageid = models.ForeignKey(Image)
 
-    liker = models.CharField(max_length=20)
+    like = models.ForeignKey(User)
 
-        
-    def __str__(self):
-
-        return 'liker:{}'.format(self.liker)
-    
-    def get_user(self):
-
-        return User.objects.filter(username=self.liker)[0]
+ 
