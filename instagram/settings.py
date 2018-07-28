@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'pyuploadcare.dj',
     'instagramClone',
+    'friendship',
 ]
 
 MIDDLEWARE = [
