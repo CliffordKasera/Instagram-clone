@@ -14,7 +14,7 @@ class Profile(models.Model):
 
     bio = models.CharField(max_length=255)
 
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User, related_name="profile")
 
     def save_profile(self):
 
@@ -87,12 +87,21 @@ class Image(models.Model):
         images = Image.objects.filter(user__pk = user)
         return images
 
+    @property
+    def count_likes(self):
+        likes = self.likes.count()
+        return likes
+
+    @property
+    def count_comments(self):
+        comments = self.comments.count()
+        return comments
 
 class Comments(models.Model):
 
     comment = models.CharField(max_length=140,blank=True,null=True)
 
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name='comments')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -118,8 +127,8 @@ class Comments(models.Model):
 
 class Likes(models.Model):
 
-    imageid = models.ForeignKey(Image)
+    imageid = models.ForeignKey(Image, related_name='likes')
 
-    liker = models.ForeignKey(User)
+    liker = models.ForeignKey(User, related_name='likes')
 
         

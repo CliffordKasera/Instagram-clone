@@ -1,86 +1,148 @@
-{% extends 'instagram/base.html' %} 
-{% load static %}
-{% block content %}
-<body style="background-color: tan">
-<div class="container top" style="overflow: hidden;">
-    
-    <div class="row">
-        
-        <div class="col-md-7">
-            {% if user.is_authenticated %}
-            
-            {% for img in images %}
-            
-            <div class="home-images">
-                
-                <p class="home-text">
-                    
-                    <a href="{% url 'edit_profile' username=img.user.username %}">{{img.user.username}}</a>
-                
-                </p>
-                
-                <img src="{{img.image.cdn_url}}" alt="Image">
-                
-                <ul class="list-inline home-text">
-                    
-                    <li class="list-inline-item">
-                        
-                        <i class="fa fa-heart-o fa-2x" aria-hidden="true"></i>
-                    
-                    </li>
-                    
-                    <li class="list-inline-item">
-                        
-                        <a href="{% url 'single_image' image_id=img.id %}">
-                            
-                            <i class="fa fa-comment-o fa-2x" aria-hidden="true"></i>
-                        
-                        </a>
-                    
-                    </li>
-                
-                </ul>
-                
-                <ul class="list-inline home-list">
-                    
-                    <li class="list-inline-item">
-                        
-                        <a href="{% url 'edit_profile' username=img.user.username %}">{{img.user.username}}</a>
-                    
-                    </li>
-                    
-                    <li class="list-inline-item">
-                        
+{%extends 'instagram/base.html'%} 
+
+{% load static%} 
+
+{% load bootstrap4 %} 
+
+{% load friendshiptags %} 
+
+{% block content %} 
+
+{{block.super}}
+
+<div class="container top-marg profile home">
+    <div class="row uploads">
+        <div class="col-xs-12 col-sm-12 col-md-7">
+                 {% if user.is_authenticated %}
+
+            {% for image in images %}
+            <div class="card">
+                <div class="card-title">
+
+
+                    <a href="{% url 'edit_profile' username=image.user.username %}" class="link">
+                        <span class="">{{ image.user.username }}</span>
+                    </a>
+                   
+
+                </div>
+
+                <a href="{% url 'like' image_id=image.id%}">
+                    <img class="card-img-top" src="{{image.image.cdn_url}}" alt="Image of {{image.name}}">
+                </a>
+
+                <div class="card-body">
+
+                    <span>
+                        {% if image.id in list %}
+                        <i class="far fa-heart likedheart"></i>
+                        {% else %}
+                        <i class="far fa-heart"></i>
+                        {% endif %}
+                    </span>
+                    <span>
+                        <i class="far fa-comment clickme"></i>
+                    </span>
+                    <p class="inline">
+                        <strong class="list-inline">{{image.profile.username}} </strong>
                         {% autoescape on %}
-                        
-                        <p>{{img.caption|safe}} </p>
-                        
+                        <span class="list-inline">{{image.caption | truncatechars:150 | safe}}
+                        </span>
                         {% endautoescape %}
-                    
-                    </li>
-                
-                </ul>
+                    </p>
+                    <p style="display:block"> {{image.count_likes}} likes </p>
+                    <p class="clickcomment text-muted">
+                        Load comments ({{image.count_comments}})
+                        <i class="fas fa-ellipsis-h" style="padding:5px"></i>
+                    </p>
+                    <div class="showcomment comments">
+                        {% for comment in comments %} {% if comment.image_id == image.id %}
+
+                        <div class="commentdetail">
+                            <span> {{comment.user.username}} </span>
+                            <p>{{comment.comment}}</p>
+                        </div>
+                        {% else %} {% endif %} {% endfor %}
+
+                    </div>
+                    <hr>
+
+                    <p class="text-muted clickme">
+                        Add a comment
+                    </p>
+                    <form action="{%url 'comment' image_id=image.id %}" method="POST" enctype="multipart/form-data" class="hideme">
+                        {% csrf_token %} {% bootstrap_form form %}
+                        <input type="hidden" name="next" value="/">
+                    </form>
+
+                </div>
 
             </div>
             {% empty %}
+            <div class="col-md-12">
+                <h4 class="text-center">You cannot see posts follow someone to view their posts</h4>
+            </div>
             {% endfor %}
-            
-            {% else %}
-                          
-            <br>
-            <br>
-            <br>
-                <h1 style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 40px;">Instagram</h1>
-                <br>
-                <br>
-                <p style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 30px;">sign up to view pictures</p>
-                <p style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 30px;">and videos from family and friends</p>    
-            {% endif %}
-        
-        </div>
-    
-    </div>
 
+        </div>
+        <!-- Modal class to display details of image -->
+        <!-- Modal class to display comment form -->
+        <!-- Image details modal -->
+        {% for image in images %}
+        <div class="modal fade" id="{{image.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- End of posted images main section -->
+
+
+
+        <!-- Users side section -->
+        <div class="col-xs-12 col-sm-12 col-md-5 position">
+            <!-- <img src="/static/images/avatar.jpg" alt="avatar" class="img-thumbnail rounded-circle user"> -->
+            {% if user.profile.profile_pic %}
+            <img src="{{user.profile.profile_pic.cdn_url}}" alt="profile-photo" class="img-thumbnail rounded-circle user"> {% else %}
+            <img src="/static/images/logo.jpg" alt="avatar" class="img-thumbnail rounded-circle user"> {% endif %}
+            <strong class="list-inline">{{user.username}} </strong>
+            <hr>
+            <p class="text-muted"> Explore Instagram to see other users</p>
+            <div class="contain user">
+                {% for profile in prof %}
+
+                <div class="users">
+                
+                     {% if profile.profile.profile_pic %}
+                    <img src="{{profile.profile.profile_pic.cdn_url}}" alt="profile-photo" class="img-thumbnail rounded-circle user"> {% else %}
+                    <img src="/static/images/logo.jpg" alt="avatar" class="img-thumbnail rounded-circle user"> {% endif %}
+                    <a href="{% url 'edit_profile' username=profile.username %}" class="link">
+                        <strong class="list-inline">{{profile.username}} </strong>
+                    </a>
+
+                    
+                </div>
+                {% endfor %}
+            </div>
+                         {% else %}
+                        
+                        <br>
+                        <br>
+                        <br>
+                        <h1 style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 40px;">Instagram</h1>
+                        <br>
+                        <br>
+                        <p style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 30px;">sign up to view pictures</p>
+                        <p style="padding-left: 300px; font-style: italic; font-weight: bold; font-size: 30px;">and videos from family and friends</p>
+                        {% endif %}
+        </div>
+    </div>
 </div>
-</body>
+
 {% endblock %}

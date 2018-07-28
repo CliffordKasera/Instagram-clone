@@ -1,0 +1,35 @@
+{% extends 'instagram/base.html' %} 
+
+{% block content %}
+<body style="overflow: hidden; height:100%">
+<div class="container top">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2 class="font2">Search results for {{message}}</h2>
+        </div>
+    </div>
+    <div class="row">
+        {% if profiles %} 
+        
+        {% for profile in profiles %}
+        <div class="row" style="overflow:hidden;-webkit-border-radius:50px; -moz-border-radius:50px; border-radius:100px; width:90px;height:100px;">            
+            {% if profile.profile_pic %}
+            <img src="{{profile.profile_pic.cdn_url}}" alt="profile-photo"> 
+            
+            {% else %}
+                <h1>No Profile Picture</h1>            
+            {% endif %}
+        </div>
+            <p class="username">{{profile.user.username}} </p>
+            <p>
+                <a class="btn btn-primary" href="{% url 'edit_profile' username=profile.user.username %}">View Profile</a>
+            </p>
+        {% endfor %} {% else %}
+        <div class="col-md-12 text-center">
+            <h4 class="font1">No results for {{message}} </h4>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</body>
+{% endblock %}

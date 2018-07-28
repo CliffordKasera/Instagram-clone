@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from .models import Image, Profile, Comments, Likes
+from friendship.models import Follow
 from .forms import ImageForm, ProfileForm, CommentForm
 from django.contrib.auth.models import User
 from friendship.exceptions import AlreadyExistsError
@@ -16,31 +17,41 @@ def home(request):
     title = 'Instagram'
     current_user = request.user
     images = Image.get_all_images()
-    comments = Comment.objects.all()
+    comments = Comments.objects.all()
     likes = Likes.objects.all()
     profile = Profile.objects.all()
+    form = CommentForm()
+    id = request.user.id
+    prof = User.objects.all()
+    liked_images = Likes.objects.filter(liker_id=id)
+    mylist = [i.imageid for i in liked_images]
     
     return render(request, 'instagram/index.html', locals())
 
 
-@login_required(login_url='/accounts/login')
+@login_required(login_url='/accounts/login/')
 def upload_image(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = ImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            upload = form.save(commit=False)
-            upload.profile = current_user
-            upload.save()
-            return redirect('edit_profile', username=request.user)
-    else:
+        profile = Profile.objects.all()
         form = ImageForm()
-    
-    return render(request, 'registration/upload_image.html', locals())
+        for profile in profile:
+            if profile.user.id == request.user.id:
+                if request.method == 'POST':
+                    form = ImageForm(request.POST, request.FILES)
+                    if form.is_valid():
+                        upload =form.save(commit=False)
+                        upload.user = request.user
+                        upload.profile_pics = profile
+                        upload.save()
+                        return redirect('edit_profile', username=request.user)
+                else:
+                    form = ImageForm()
+
+        return render(request, 'registration/upload_image.html',{'form':form})
 
 @login_required(login_url='/accounts/login')
 def edit_profile(request, username):
     user = User.objects.get(username=username)
+    profile = User.objects.get(username=username)
     try:
         profile_details = Profile.get_by_id(user.id)
     except:
@@ -118,16 +129,18 @@ def comment(request,image_id):
 
 
 def follow(request,user_id):
-    users=User.objects.get(id=user_id)
-    follow = Follow.objects.add_follower(request.user, users)
-
-    return redirect('/edit_profile/', locals())
+    users = User.objects.get(id = user_id)
+    try:
+        follow = Follow.objects.add_follower(request.user, users)
+    except AlreadyExistsError:
+        return Http404
+    return redirect('home', locals())
 
 
 def like(request, image_id):
     current_user = request.user
     image=Image.objects.get(id=image_id)
-    new_like,created= Likes.objects.get_or_create(liker=current_user, image=image)
+    new_like,created= Likes.objects.get_or_create(liker=current_user, imageid=image)
     new_like.save()
 
     return redirect('home')

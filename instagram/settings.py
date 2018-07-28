@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
+    'bootstrap4',
     'pyuploadcare.dj',
     'instagramClone',
     'friendship',
@@ -80,7 +81,7 @@ LOGIN_REDIRECT_URL = '/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'instagram',
+        'NAME': 'insta',
         'USER': 'blankphrase',
         'PASSWORD': 'password',
     }

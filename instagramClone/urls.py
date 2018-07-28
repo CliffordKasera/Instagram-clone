@@ -13,7 +13,10 @@ urlpatterns = [
     url(r'^user/(?P<username>\w+)',views.edit_profile, name='edit_profile'),
     url(r'^accounts/editprofile/',views.editprofile, name='editprofile'),
     url(r'^image/(?P<image_id>\d+)', views.single_image, name='single_image'),
-    url(r'^search/', views.search, name='search')
+    url(r'^search/', views.search, name='search'),
+    url(r'^comment/(?P<image_id>\d+)', views.comment, name='comment'),
+    url(r'^like/(?P<image_id>\d+)', views.like, name='like'),
+    url(r'^follow/(?P<user_id>\d+)', views.follow, name='follow'),
 ]
 
 if settings.DEBUG:
