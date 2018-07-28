@@ -8,14 +8,13 @@ from friendship.models import Friend,Follow,Block
 
 # Create your models here.
 
-
 class Profile(models.Model):
 
     profile_pic = ImageField(blank=True, manual_crop="")
 
     bio = models.CharField(max_length=255)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User)
 
     def save_profile(self):
 
@@ -48,8 +47,6 @@ class Image(models.Model):
     profile_pics = models.ForeignKey(Profile,on_delete=models.CASCADE)
 
     image = ImageField(null=True, blank=True, manual_crop="")
-
-    upload_date = models.DateTimeField(auto_now=True)
 
     caption = models.CharField(max_length=250)
 
@@ -95,8 +92,6 @@ class Comments(models.Model):
 
     comment = models.CharField(max_length=140,blank=True,null=True)
 
-    posted_on = models.DateTimeField(auto_now_add=True)
-
     image = models.ForeignKey(Image, on_delete=models.CASCADE)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -125,6 +120,6 @@ class Likes(models.Model):
 
     imageid = models.ForeignKey(Image)
 
-    like = models.ForeignKey(User)
+    liker = models.ForeignKey(User)
 
- 
+        
